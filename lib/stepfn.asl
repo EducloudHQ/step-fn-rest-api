@@ -4,9 +4,9 @@
   "States": {
     "InitState": {
       "Type": "Pass",
-      "Next": "LevelState"
+      "Next": "Request Method"
     },
-    "LevelState": {
+    "Request Method": {
       "Type" : "Choice",
       "Choices": [
         {
