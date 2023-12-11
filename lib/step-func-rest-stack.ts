@@ -21,10 +21,10 @@ export class StepFuncRestStack extends cdk.Stack {
 
     const file: Buffer = fs.readFileSync(__dirname + "/stepfn.asl");
 
-    const stateMachine: sfn.StateMachine = new sfn.StateMachine(this, "MyStateMachine", {
+    const stateMachine: sfn.StateMachine = new sfn.StateMachine(this, "WeatherApiStateMachine", {
       definitionBody: sfn.StringDefinitionBody.fromString(file.toString()),
       stateMachineType: sfn.StateMachineType.EXPRESS,
-      stateMachineName: "MyStateMachine",
+      stateMachineName: "WeatherApiStateMachine",
       tracingEnabled: true,
       logs: {
         destination: logGroup,
@@ -52,7 +52,6 @@ export class StepFuncRestStack extends cdk.Stack {
         tracingEnabled: true,
         metricsEnabled: true,
       },
-      cloudWatchRoleRemovalPolicy: cdk.RemovalPolicy.DESTROY
     });
 
     restApi.root.addMethod("ANY");
@@ -102,7 +101,7 @@ export class StepFuncRestStack extends cdk.Stack {
       })
     );
 
-    
+    // List weather
     weather.addMethod(
       "GET",
       apigateway.StepFunctionsIntegration.startExecution(stateMachine, {

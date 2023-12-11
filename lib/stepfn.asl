@@ -87,7 +87,6 @@
         "ErrorEquals": ["States.All"],
         "Next": "Item Not Found"
       }],
-      "ResultPath": "$.GetStore",
       "Next": "Item Found"
     },
 
@@ -120,7 +119,6 @@
         "ErrorEquals": ["States.All"],
         "Next": "Item Not Updated"
       }],
-      "ResultPath": "$.GetStore",
       "Next": "Item Updated"
     },
 
@@ -146,10 +144,8 @@
         "ErrorEquals": ["States.All"],
         "Next": "Item Not Deleted"
       }],
-      "ResultPath": "$.GetStore",
       "Next": "Item Deleted"
     },
-
     "Item fail To Create":{
       "Type": "Fail",
       "Error": "Item Create Fail",
