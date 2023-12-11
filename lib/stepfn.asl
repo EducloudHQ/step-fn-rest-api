@@ -29,8 +29,7 @@
           "StringEquals": "GET",
           "Next": "DynamoDB Get Weather Item"
         }
-      ],
-      "Default": "Default"
+      ]
     },
     "DynamoDB Create Weather Item": {
       "Type": "Task",
@@ -60,10 +59,10 @@
         "ErrorEquals": [
           "States.All"
         ],
-        "Next": "Item fail To Create"
+        "Next": "Create Failed"
       }],
       "ResultPath": "$.dynamodbPut",
-      "Next": "Item Created"
+      "Next": "Create Success"
     },
     "DynamoDB Get Weather Item": {
       "Type": "Task",
@@ -85,9 +84,9 @@
       ],
       "Catch": [{
         "ErrorEquals": ["States.All"],
-        "Next": "Item Not Found"
+        "Next": "Get Failed"
       }],
-      "Next": "Item Found"
+      "Next": "Get Success"
     },
 
     "DynamoDB Update Weather Item": {
@@ -117,9 +116,9 @@
       ],
       "Catch": [{
         "ErrorEquals": ["States.All"],
-        "Next": "Item Not Updated"
+        "Next": "Update Failed"
       }],
-      "Next": "Item Updated"
+      "Next": "Update Success"
     },
 
     "DynamoDB Delete Weather Item": {
@@ -142,49 +141,45 @@
       ],
       "Catch": [{
         "ErrorEquals": ["States.All"],
-        "Next": "Item Not Deleted"
+        "Next": "Delete Failed"
       }],
-      "Next": "Item Deleted"
+      "Next": "Delete Success"
     },
-    "Item fail To Create":{
+    "Create Failed":{
       "Type": "Fail",
       "Error": "Item Create Fail",
       "Cause": "Dynamodb error"
     },
-    "Item Created":{
+    "Create Success":{
       "Type": "Pass",
       "End": true
     },
-    "Item Found":{
+    "Get Success":{
       "Type": "Pass",
       "End": true
     },
-    "Item Not Found":{
+    "Get Failed":{
       "Type": "Fail",
       "Error": "Item Create Fail",
       "Cause": "Dynamodb error"
     },
-    "Item Deleted":{
+    "Delete Success":{
       "Type": "Pass",
       "End": true
     },
-    "Item Not Deleted":{
+    "Delete Failed":{
       "Type": "Fail",
       "Error": "Item Delete Fail",
       "Cause": "Dynamodb error"
     },
-    "Item Updated":{
+    "Update Success":{
       "Type": "Pass",
       "End": true
     },
-    "Item Not Updated":{
+    "Update Failed":{
       "Type": "Fail",
       "Error": "Item Update Fail",
       "Cause": "Dynamodb error"
-    },
-    "Default":{
-      "Type": "Pass",
-      "End": true
     }
   }
 }
