@@ -10,22 +10,22 @@
       "Type" : "Choice",
       "Choices": [
         {
-          "Variable": "$.httpMethod",
+          "Variable": "$.requestContext.httpMethod",
           "StringEquals": "POST",
           "Next": "DynamoDB Create Weather Item"
         },
         {
-          "Variable": "$.httpMethod",
+          "Variable": "$.requestContext.httpMethod",
           "StringEquals": "PUT",
           "Next": "DynamoDB Update Weather Item"
         },
         {
-          "Variable": "$.httpMethod",
+          "Variable": "$.requestContext.httpMethod",
           "StringEquals": "DELETE",
           "Next": "DynamoDB Delete Weather Item"
         },
         {
-          "Variable": "$.httpMethod",
+          "Variable": "$.requestContext.httpMethod",
           "StringEquals": "GET",
           "Next": "DynamoDB Get Weather Item"
         }

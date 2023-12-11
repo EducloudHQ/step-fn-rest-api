@@ -37,13 +37,6 @@ export class StepFuncRestStack extends cdk.Stack {
 
     table.grantReadWriteData(stateMachine);
 
-    const stateMachineARN: cdk.Arn = stateMachine.stateMachineArn;
-
-    const RequestTemplateJson: string =
-      '#set($inputString = \'\')\r\n#set($includeHeaders = true)\r\n#set($includeQueryString = true)\r\n#set($includePath = true)\r\n#set($includeAuthorizer = false)\r\n#set($allParams = $input.params())\r\n#set($inputRoot=\'"httpMethod" :"\'+ $context.httpMethod+\'"\')\r\n{\r\n    "stateMachineArn": "' +
-      stateMachineARN +
-      '",\r\n\r\n    #set($inputString = "$inputString,@@body@@: $input.body")\r\n\r\n    #if ($includeHeaders)\r\n        #set($inputString = "$inputString, @@header@@:{")\r\n        #foreach($paramName in $allParams.header.keySet())\r\n            #set($inputString = "$inputString @@$paramName@@: @@$util.escapeJavaScript($allParams.header.get($paramName))@@")\r\n            #if($foreach.hasNext)\r\n                #set($inputString = "$inputString,")\r\n            #end\r\n        #end\r\n        #set($inputString = "$inputString },$inputRoot")\r\n\r\n        \r\n    #end\r\n\r\n    #if ($includeQueryString)\r\n        #set($inputString = "$inputString, @@querystring@@:{")\r\n        #foreach($paramName in $allParams.querystring.keySet())\r\n            #set($inputString = "$inputString @@$paramName@@: @@$util.escapeJavaScript($allParams.querystring.get($paramName))@@")\r\n            #if($foreach.hasNext)\r\n                #set($inputString = "$inputString,")\r\n            #end\r\n        #end\r\n        #set($inputString = "$inputString }")\r\n    #end\r\n\r\n    #if ($includePath)\r\n        #set($inputString = "$inputString, @@path@@:{")\r\n        #foreach($paramName in $allParams.path.keySet())\r\n            #set($inputString = "$inputString @@$paramName@@: @@$util.escapeJavaScript($allParams.path.get($paramName))@@")\r\n            #if($foreach.hasNext)\r\n                #set($inputString = "$inputString,")\r\n            #end\r\n        #end\r\n        #set($inputString = "$inputString }")\r\n    #end\r\n    \r\n    #if ($includeAuthorizer)\r\n        #set($inputString = "$inputString, @@authorizer@@:{")\r\n        #foreach($paramName in $context.authorizer.keySet())\r\n            #set($inputString = "$inputString @@$paramName@@: @@$util.escapeJavaScript($context.authorizer.get($paramName))@@")\r\n            #if($foreach.hasNext)\r\n                #set($inputString = "$inputString,")\r\n            #end\r\n        #end\r\n        #set($inputString = "$inputString }")\r\n    #end\r\n\r\n    #set($requestContext = "")\r\n    ## Check if the request context should be included as part of the execution input\r\n    #if($requestContext && !$requestContext.empty)\r\n        #set($inputString = "$inputString,")\r\n        #set($inputString = "$inputString @@requestContext@@: $requestContext")\r\n    #end\r\n\r\n    #set($inputString = "$inputString}")\r\n    #set($inputString = $inputString.replaceAll("@@",\'"\'))\r\n    #set($len = $inputString.length() - 1)\r\n    "input": "{$util.escapeJavaScript($inputString.substring(1,$len)).replaceAll("\\\\\'","\'")}"\r\n}';
-
     const restApi: apigateway.RestApi = new apigateway.RestApi(this, "weather-api", {
       restApiName: "weather-api",
       deployOptions: {
@@ -60,10 +53,11 @@ export class StepFuncRestStack extends cdk.Stack {
     weather.addMethod(
       "POST",
       apigateway.StepFunctionsIntegration.startExecution(stateMachine, {
-        passthroughBehavior: apigateway.PassthroughBehavior.WHEN_NO_MATCH,
-        requestTemplates: {
-          "application/json": RequestTemplateJson,
+        requestContext: {
+          httpMethod: true,
         },
+        passthroughBehavior: apigateway.PassthroughBehavior.WHEN_NO_MATCH,
+        
       })
     );
     const weatherIdRoute: apigateway.Resource = weather.addResource('{weatherId}')
@@ -73,8 +67,8 @@ export class StepFuncRestStack extends cdk.Stack {
       "GET",
       apigateway.StepFunctionsIntegration.startExecution(stateMachine, {
         passthroughBehavior: apigateway.PassthroughBehavior.WHEN_NO_MATCH,
-        requestTemplates: {
-          "application/json": RequestTemplateJson,
+        requestContext: {
+          httpMethod: true,
         },
       })
     );
@@ -84,8 +78,8 @@ export class StepFuncRestStack extends cdk.Stack {
       "PUT",
       apigateway.StepFunctionsIntegration.startExecution(stateMachine, {
         passthroughBehavior: apigateway.PassthroughBehavior.WHEN_NO_MATCH,
-        requestTemplates: {
-          "application/json": RequestTemplateJson,
+        requestContext: {
+          httpMethod: true,
         },
       })
     );
@@ -95,8 +89,8 @@ export class StepFuncRestStack extends cdk.Stack {
       "DELETE",
       apigateway.StepFunctionsIntegration.startExecution(stateMachine, {
         passthroughBehavior: apigateway.PassthroughBehavior.WHEN_NO_MATCH,
-        requestTemplates: {
-          "application/json": RequestTemplateJson,
+        requestContext: {
+          httpMethod: true,
         },
       })
     );
@@ -106,8 +100,8 @@ export class StepFuncRestStack extends cdk.Stack {
       "GET",
       apigateway.StepFunctionsIntegration.startExecution(stateMachine, {
         passthroughBehavior: apigateway.PassthroughBehavior.WHEN_NO_MATCH,
-        requestTemplates: {
-          "application/json": RequestTemplateJson,
+        requestContext: {
+          httpMethod: true,
         },
       })
     );
